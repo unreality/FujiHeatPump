@@ -15,7 +15,7 @@ Quick start
 FujiHeatPump hp;
 
 void setup() {
-  hp.connect(&Serial2, true);
+  hp.connect(&Serial2, true); // second parameter is whether to init as a secondary controller
 }
 
 void loop() {
@@ -50,6 +50,12 @@ Notes
 -----
 - Tested with ESP32
 - Tested with TeensyLC/Teensy3.5
+
+Further Work
+------------
+- Errors are sent by the AC in various states, these are currently ignored.
+- Several bits in messages serve unknown purposes.
+- It is unknown how much current is available on the 12v rail, so whether an ESP32 can be powered from the 3-wire is unknown.
 
 Parts Required
 --------------
