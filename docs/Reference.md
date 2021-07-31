@@ -40,9 +40,9 @@ The FujiHeatPump object is used to control the Fujitsu Airconditioner, it has th
    * FujiMode enum is available for values
    * example: `hp.setMode(static_cast<byte>(FujiMode::COOL));` 
  * `void setFanMode(byte fm);`
-   * Sets fan mode (QUIET, LOW, MEDIUM, HIGH, AUTO) for the AC
+   * Sets fan mode (FAN_QUIET, FAN_LOW, FAN_MEDIUM, FAN_HIGH, FAN_AUTO) for the AC
    * FujiFanMode enum is available for values
-   * example: `hp.setFanMode(static_cast<byte>(FujiFanMode::LOW));` 
+   * example: `hp.setFanMode(static_cast<byte>(FujiFanMode::FAN_LOW));` 
  * `void setEconomyMode(byte em);`
    * Sets economy mode for the AC
  * `void setSwingMode(byte sm);`
