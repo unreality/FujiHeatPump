@@ -129,15 +129,6 @@ bool FujiHeatPump::waitForFrame() {
             lastFrameReceived = millis();
             
             if(ff.messageType == static_cast<byte>(FujiMessageType::STATUS)){
-                
-                // some janky error checking
-                /*
-                if(ff.controllerPresent == 1 && ff.updateMagic != 10) {
-                    return false;
-                } else if(ff.controllerPresent == 1 && ff.updateMagic != 0) {
-                    return false;
-                }*/
-                
 
                 if(ff.controllerPresent == 1) {
                     // we have logged into the indoor unit

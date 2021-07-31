@@ -43,7 +43,7 @@ const byte kControllerPresentMask = 0b00000001;
 const byte kControllerPresentOffset = 0;
 
 const byte kControllerTempIndex = 6;
-const byte kControllerTempMask = 0b00111111;
+const byte kControllerTempMask = 0b00111110;
 const byte kControllerTempOffset = 1;
 
 
@@ -57,12 +57,12 @@ typedef struct FujiFrames  {
     byte swingMode = 0;
     byte swingStep = 0;
     byte controllerPresent = 0;
-    byte updateMagic = 0;
+    byte updateMagic = 0; // unsure what this value indicates
     byte controllerTemp = 16;
 
     bool writeBit = false;
     bool loginBit = false;
-    bool unknownBit = false;
+    bool unknownBit = false; // unsure what this bit indicates
 
     byte messageType = 0;
     byte messageSource = 0;
@@ -92,7 +92,7 @@ class FujiHeatPump
     
     bool pendingFrame = false;
   public:
-    void connect(HardwareSerial *serial, bool slave);
+    void connect(HardwareSerial *serial, bool secondary);
     bool waitForFrame();
     void sendPendingFrame();
     bool isBound();
@@ -146,6 +146,14 @@ enum class FujiAddress : byte {
   SECONDARY   = 33,
 };
 
+enum class FujiFanMode : byte {
+  FAN_AUTO      = 0,
+  FAN_QUIET     = 1,
+  FAN_LOW       = 2,
+  FAN_MEDIUM    = 3,
+  FAN_HIGH      = 4
+};
+
 const byte kOnOffUpdateMask       = 0b10000000;
 const byte kTempUpdateMask        = 0b01000000;
 const byte kModeUpdateMask        = 0b00100000;
@@ -153,4 +161,3 @@ const byte kFanModeUpdateMask     = 0b00010000;
 const byte kEconomyModeUpdateMask = 0b00001000;
 const byte kSwingModeUpdateMask   = 0b00000100;
 const byte kSwingStepUpdateMask   = 0b00000010;
-//const byte kOnOffUpdateMask = 0b10000001;

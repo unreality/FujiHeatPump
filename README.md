@@ -39,12 +39,19 @@ void loop() {
 
 ```
 
+See the [API Reference](https://github.com/unreality/FujiHeatPump/blob/master/docs/Reference.md) for more details.
 
 Installation
 ------------
 - Clone repository
 - Move contents into Arduino library directory
 - Restart IDE
+
+Secondary Mode Notes
+--------------------
+
+This library supports connecting as a primary or secondary remote control. If using it in secondary mode, there are some timing requirements that you need to be aware of. The primary controller will only send ONE frame to check whether there is a secondary controller. This occurs approx **4 seconds** after the unit is switched on. If this frame is missed, you cannot join the bus as a secondary controller. 
+
 
 Notes
 -----
