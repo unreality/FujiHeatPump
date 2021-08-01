@@ -94,7 +94,8 @@ void FujiHeatPump::printFrame(byte buf[8], FujiFrame ff) {
 }
 
 void FujiHeatPump::sendPendingFrame() {
-    if(pendingFrame && millis() >= lastFrameReceived + 50) {
+    if( (pendingFrame && millis() >= lastFrameReceived + 50) ||
+        (pendingFrame && millis() <  lastFrameReceived) ) {      // account for rollover
         _serial->write(writeBuf, 8);
         pendingFrame = false;
         updateFields = 0;
