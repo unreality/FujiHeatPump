@@ -74,7 +74,7 @@ void FujiHeatPump::encodeFrame(FujiFrame ff){
 void FujiHeatPump::connect(HardwareSerial *serial, bool secondary){
     _serial = serial;
     _serial->begin(500, SERIAL_8E1);
-    _serial->setTimeout(250);
+    _serial->setTimeout(200);
     
     if(secondary) {
         controllerIsPrimary = false;
@@ -89,16 +89,18 @@ void FujiHeatPump::connect(HardwareSerial *serial, bool secondary){
 
 void FujiHeatPump::printFrame(byte buf[8], FujiFrame ff) {
   Serial.printf("%X %X %X %X %X %X %X %X  ", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
-  Serial.printf(" mSrc: %d mDst: %d mType: %d write: %d login: %d unknown: %d onOff: %d temp: %d, mode: %d cP:%d uM:%d cTemp:%d \n", ff.messageSource, ff.messageDest, ff.messageType, ff.writeBit, ff.loginBit, ff.unknownBit, ff.onOff, ff.temperature, ff.acMode, ff.controllerPresent, ff.updateMagic, ff.controllerTemp);
+  Serial.printf(" mSrc: %d mDst: %d mType: %d write: %d login: %d unknown: %d onOff: %d temp: %d, mode: %d cP:%d uM:%d cTemp:%d acError:%d \n", ff.messageSource, ff.messageDest, ff.messageType, ff.writeBit, ff.loginBit, ff.unknownBit, ff.onOff, ff.temperature, ff.acMode, ff.controllerPresent, ff.updateMagic, ff.controllerTemp, ff.acError);
 
 }
 
 void FujiHeatPump::sendPendingFrame() {
-    if( (pendingFrame && millis() >= lastFrameReceived + 50) ||
-        (pendingFrame && millis() <  lastFrameReceived) ) {      // account for rollover
+    if( pendingFrame && (millis() - lastFrameReceived) > 50) {
         _serial->write(writeBuf, 8);
+        _serial->flush();
         pendingFrame = false;
         updateFields = 0;
+
+        _serial->readBytes(writeBuf, 8); // read back our own frame so we dont process it again
     }
 }
 
@@ -175,7 +177,7 @@ bool FujiHeatPump::waitForFrame() {
                         // the secondary controller seems to send the same flags no matter which message type
                         
                         ff.messageSource     = controllerAddress;
-                        ff.messageDest       = static_cast<byte>(FujiAddress::UNIT);;
+                        ff.messageDest       = static_cast<byte>(FujiAddress::UNIT);
                         ff.loginBit          = false;
                         ff.controllerPresent = 1;
                         ff.updateMagic       = 2;
@@ -214,7 +216,7 @@ bool FujiHeatPump::waitForFrame() {
                     ff.swingStep = updateState.swingStep;
                 }
                 
-                currentState = ff;
+                memcpy(&currentState, &ff, sizeof(FujiFrame));
 
             }
             else if(ff.messageType == static_cast<byte>(FujiMessageType::LOGIN)){
@@ -238,6 +240,7 @@ bool FujiHeatPump::waitForFrame() {
             } else if(ff.messageType == static_cast<byte>(FujiMessageType::ERROR)) {
                 Serial.printf("AC ERROR RECV: ");
                 printFrame(readBuf, ff);
+                // handle errors here
                 return false;
             }
             
