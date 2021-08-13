@@ -72,8 +72,21 @@ void FujiHeatPump::encodeFrame(FujiFrame ff){
 }
 
 void FujiHeatPump::connect(HardwareSerial *serial, bool secondary){
+    return this->connect(serial, secondary, -1, -1);
+}
+
+void FujiHeatPump::connect(HardwareSerial *serial, bool secondary, int rxPin=-1, int txPin=-1){
     _serial = serial;
-    _serial->begin(500, SERIAL_8E1);
+    if(rxPin != -1 && txPin != -1) {
+#ifdef ESP32
+        _serial->begin(500, SERIAL_8E1, rxPin, txPin);
+#else
+        Serial.print("Setting RX/TX pin unsupported, using defaults.\n");
+        _serial->begin(500, SERIAL_8E1);
+#endif
+    } else {
+        _serial->begin(500, SERIAL_8E1);
+    }
     _serial->setTimeout(200);
     
     if(secondary) {
@@ -94,7 +107,7 @@ void FujiHeatPump::printFrame(byte buf[8], FujiFrame ff) {
 }
 
 void FujiHeatPump::sendPendingFrame() {
-    if( pendingFrame && (millis() - lastFrameReceived) > 50) {
+    if(pendingFrame && (millis() - lastFrameReceived) > 50) {
         _serial->write(writeBuf, 8);
         _serial->flush();
         pendingFrame = false;
