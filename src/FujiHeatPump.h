@@ -93,6 +93,8 @@ class FujiHeatPump
     bool pendingFrame = false;
   public:
     void connect(HardwareSerial *serial, bool secondary);
+    void connect(HardwareSerial *serial, bool secondary, int rxPin, int txPin);
+
     bool waitForFrame();
     void sendPendingFrame();
     bool isBound();
