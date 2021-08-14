@@ -62,7 +62,6 @@ Further Work
 ------------
 - Errors are sent by the AC in various states, these are currently ignored.
 - Several bits in messages serve unknown purposes.
-- It is unknown how much current is available on the 12v rail, so whether an ESP32 can be powered from the 3-wire is unknown.
 
 Parts Required
 --------------
