@@ -15,12 +15,14 @@ Quick start
 FujiHeatPump hp;
 
 void setup() {
-  hp.connect(&Serial2, true); // second parameter is whether to init as a secondary controller
+  hp.connect(&Serial2, true); // use Serial2, and bind as a secondary controller
 }
 
 void loop() {
-  hp.waitForFrame();     // attempt to read state from bus and place a reply frame in the buffer
-  hp.sendPendingFrame(); // send any frame waiting in the buffer
+  if(hp.waitForFrame()) {   // attempt to read state from bus and place a reply frame in the buffer
+    delay(60);              // frames should be sent 50-60ms after recieving - potentially other work can be done here
+    hp.sendPendingFrame();  // send any frame waiting in the buffer
+  }
   
   //do an update
   if(weWantToUpdate) {
@@ -51,6 +53,10 @@ Secondary Mode Notes
 --------------------
 
 This library supports connecting as a primary or secondary remote control. If using it in secondary mode, there are some timing requirements that you need to be aware of. The primary controller will only send ONE frame to check whether there is a secondary controller. This occurs approx **4 seconds** after the unit is switched on. If this frame is missed, you cannot join the bus as a secondary controller. 
+
+Example Circuit
+---------------
+<img src="https://github.com/unreality/FujiHeatPump/blob/master/fujiheatpump-example.png"/>
 
 
 Notes
