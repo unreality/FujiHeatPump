@@ -228,6 +228,10 @@ bool FujiHeatPump::waitForFrame() {
                 if(updateFields & kSwingStepUpdateMask) {
                     ff.swingStep = updateState.swingStep;
                 }
+
+                if(updateFields & kEconomyModeUpdateMask) {
+                    ff.economyMode = updateState.economyMode;
+                }
                 
                 memcpy(&currentState, &ff, sizeof(FujiFrame));
 
