@@ -19,7 +19,7 @@ FujiFrame FujiHeatPump::decodeFrame() {
     ff.controllerPresent   = (readBuf[kControllerPresentIndex] & kControllerPresentMask) >> kControllerPresentOffset;
     ff.updateMagic         = (readBuf[kUpdateMagicIndex] & kUpdateMagicMask) >> kUpdateMagicOffset;
     ff.onOff               = (readBuf[kEnabledIndex] & kEnabledMask) >> kEnabledOffset;
-    ff.controllerTemp      = (readBuf[kControllerTempIndex] & kControllerTempMask) >> kControllerTempOffset; // there are 2 leading bits here that are unknown
+    ff.controllerTemp      = (readBuf[kControllerTempIndex] & kControllerTempMask) >> kControllerTempOffset; // there is one leading bit here that is unknown - probably a sign bit for negative temps?
 
     ff.writeBit =   (readBuf[2] & 0b00001000) != 0;
     ff.loginBit =   (readBuf[1] & 0b00100000) != 0;

@@ -43,7 +43,7 @@ const byte kControllerPresentMask = 0b00000001;
 const byte kControllerPresentOffset = 0;
 
 const byte kControllerTempIndex = 6;
-const byte kControllerTempMask = 0b00111110;
+const byte kControllerTempMask = 0b01111110;
 const byte kControllerTempOffset = 1;
 
 
