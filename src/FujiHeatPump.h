@@ -83,6 +83,7 @@ class FujiHeatPump
     unsigned long   lastFrameReceived;
     
     byte            updateFields;
+    byte            updateRepeatCount;
     FujiFrame       updateState;
     FujiFrame       currentState;
 
