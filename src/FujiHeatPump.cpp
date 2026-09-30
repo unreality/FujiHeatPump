@@ -98,6 +98,7 @@ void FujiHeatPump::connect(HardwareSerial *serial, bool secondary, int rxPin=-1,
     }
     
     lastFrameReceived = 0;
+    updateRepeatCount = 0;
 }
 
 void FujiHeatPump::printFrame(byte buf[8], FujiFrame ff) {
@@ -111,7 +112,13 @@ void FujiHeatPump::sendPendingFrame() {
         _serial->write(writeBuf, 8);
         _serial->flush();
         pendingFrame = false;
-        updateFields = 0;
+
+        if(updateRepeatCount > 0) {
+            updateRepeatCount--;
+        }
+        if(updateRepeatCount == 0) {
+            updateFields = 0;
+        }
 
         _serial->readBytes(writeBuf, 8); // read back our own frame so we dont process it again
     }
@@ -301,30 +308,37 @@ bool FujiHeatPump::updatePending() {
 }
 
 void FujiHeatPump::setOnOff(bool o){
+    updateRepeatCount = 3;
     updateFields |= kOnOffUpdateMask;
     updateState.onOff = o ? 1 : 0;   
 }
 void FujiHeatPump::setTemp(byte t){
+    updateRepeatCount = 3;
     updateFields |= kTempUpdateMask;
     updateState.temperature = t;
 }
 void FujiHeatPump::setMode(byte m){
+    updateRepeatCount = 3;
     updateFields |= kModeUpdateMask;
     updateState.acMode = m;
 }
 void FujiHeatPump::setFanMode(byte fm){
+    updateRepeatCount = 3;
     updateFields |= kFanModeUpdateMask;
     updateState.fanMode = fm;
 }
 void FujiHeatPump::setEconomyMode(byte em){
+    updateRepeatCount = 3;
     updateFields |= kEconomyModeUpdateMask;
     updateState.economyMode = em;
 }
 void FujiHeatPump::setSwingMode(byte sm){
+    updateRepeatCount = 3;
     updateFields |= kSwingModeUpdateMask;
     updateState.swingMode = sm;
 }
 void FujiHeatPump::setSwingStep(byte ss){
+    updateRepeatCount = 3;
     updateFields |= kSwingStepUpdateMask;
     updateState.swingStep = ss;  
 }
@@ -365,5 +379,3 @@ FujiFrame *FujiHeatPump::getUpdateState(){
 byte FujiHeatPump::getUpdateFields(){
     return updateFields;
 }
- 
-
